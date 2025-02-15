@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:book_app/models/book_genre.dart';
+import '../models/book_genre.dart';
 
 final genres = [
   BookGenre(

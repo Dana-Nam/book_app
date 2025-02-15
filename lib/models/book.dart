@@ -14,6 +14,7 @@ class Book {
   DateTime? completeDate;
   final String genreId;
   final String statusId;
+  int? rating;
 
   Book({
     String? id,
@@ -24,11 +25,13 @@ class Book {
     this.completeDate,
     required this.genreId,
     required this.statusId,
+    this.rating,
   }) : id = id ?? uuid.v4();
 
-  void completeBook() {
+  void completeBook(int? newRating) {
     isCompleted = !isCompleted;
     completeDate = isCompleted ? DateTime.now() : null;
+    rating = isCompleted ? newRating : null;
   }
 
   get genre {

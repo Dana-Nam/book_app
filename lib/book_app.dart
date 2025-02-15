@@ -1,5 +1,6 @@
 import 'package:book_app/models/book.dart';
 import 'package:book_app/screens/book_screen.dart';
+import 'package:book_app/widgets/new_book.dart';
 import 'package:flutter/material.dart';
 
 class BookApp extends StatefulWidget {
@@ -16,7 +17,7 @@ class _BookAppState extends State<BookApp> {
       author: "author",
       pages: 100,
       genreId: "horror",
-      statusId: "completed",
+      statusId: "in_process",
     ),
     Book(
       title: "Book 2",
@@ -30,24 +31,63 @@ class _BookAppState extends State<BookApp> {
       author: "author",
       pages: 100,
       genreId: "horror",
-      statusId: "completed",
+      statusId: "await",
     ),
   ];
 
-  void toggleBookCompletion(int index) {
+  void toggleBookCompletion(int index, {int? newRating}) {
     setState(() {
-      books[index].completeBook();
+      books[index].completeBook(newRating);
     });
   }
 
-  void deleteTask(int index) {
+  void deleteBook(int index) {
     setState(() {
       books.removeAt(index);
     });
   }
 
+  void addBook(Book newBook) {
+    setState(() {
+      books.add(newBook);
+    });
+  }
+
+  void editTask(Book editedBook) {
+    setState(() {
+      final index = books.indexWhere((task) => task.id == editedBook.id);
+      books[index] = editedBook;
+    });
+  }
+
+  void openAddBookSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom,
+        ),
+        child: NewBook(onBookCreated: addBook),
+      ),
+    );
+  }
+
   void openEditBookSheet(String id) {
-    print("object");
+    final existingTask = books.firstWhere((task) => task.id == id);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom,
+        ),
+        child: NewBook(
+          onBookCreated: editTask,
+          existingBook: existingTask,
+        ),
+      ),
+    );
   }
 
   @override
@@ -55,12 +95,17 @@ class _BookAppState extends State<BookApp> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Book App'),
-        actions: [],
+        actions: [
+          IconButton(
+            onPressed: openAddBookSheet,
+            icon: Icon(Icons.add),
+          ),
+        ],
       ),
       body: BookScreen(
         books: books,
         onToggle: toggleBookCompletion,
-        onDelete: deleteTask,
+        onDelete: deleteBook,
         onBookEdited: openEditBookSheet,
       ),
     );

@@ -17,20 +17,8 @@ class BookCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bodyLargeStyle = theme.textTheme.bodyLarge!;
-    final textStyle = bodyLargeStyle.copyWith(
-      decoration: book.isCompleted ? TextDecoration.lineThrough : null,
-      color: book.isCompleted ? theme.disabledColor : null,
-    );
     final titleSmallStyle = theme.textTheme.titleSmall!;
     final status = book.status;
-
-    Color completionDateColor = Colors.black;
-    String completionDateText = '';
-
-    // if (book.isCompleted) {
-    //   final completeDate = book.completeDate ?? DateTime.now();
-    //   completionDateText = 'Completed ${formatDateTime(completeDate)}';
-    // }
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -40,14 +28,13 @@ class BookCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(book.title, style: textStyle),
-              if (book.completeDate != null)
-                Text('Completed ${formatDate(book.completeDate!)}'),
-              if (book.isCompleted)
-                Text(
-                  completionDateText,
-                  style: TextStyle(color: completionDateColor),
-                ),
+              Text(book.title, style: titleSmallStyle),
+              Text(book.author, style: titleSmallStyle),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
               Row(
                 children: [
                   Icon(
@@ -60,15 +47,12 @@ class BookCard extends StatelessWidget {
                     status.title,
                     style: titleSmallStyle,
                   ),
+                  if (book.isCompleted) Text(' ${(book.rating!)}/5'),
                 ],
               ),
+              if (book.completeDate != null)
+                Text('Completed ${formatDate(book.completeDate!)}'),
             ],
-          ),
-          Checkbox(
-            value: book.isCompleted,
-            onChanged: (_) {
-              onToggle();
-            },
           ),
         ],
       ),

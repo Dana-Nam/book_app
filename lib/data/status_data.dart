@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:book_app/models/book_status.dart';
+
+import '../models/book_status.dart';
 
 final statuses = [
   BookStatus(

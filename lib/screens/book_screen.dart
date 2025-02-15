@@ -18,8 +18,21 @@ class BookScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final statusOrder = {
+      'in_process': 0,
+      'on_shelf': 1,
+      'await': 2,
+      'completed': 3,
+    };
+
     final sortedBooks = List<Book>.from(books)
-      ..sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+      ..sort((a, b) {
+        final statusCompare = (statusOrder[a.statusId] ?? 4)
+            .compareTo(statusOrder[b.statusId] ?? 4);
+        if (statusCompare != 0) return statusCompare;
+        return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+      });
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       itemCount: sortedBooks.length,

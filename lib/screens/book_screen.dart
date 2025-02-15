@@ -7,6 +7,7 @@ class BookScreen extends StatelessWidget {
   final void Function(int index) onToggle;
   final void Function(int index) onDelete;
   final void Function(String id) onBookEdited;
+  final void Function(Book book) onBookTapped;
 
   const BookScreen({
     super.key,
@@ -14,6 +15,7 @@ class BookScreen extends StatelessWidget {
     required this.onToggle,
     required this.onDelete,
     required this.onBookEdited,
+    required this.onBookTapped,
   });
 
   @override
@@ -63,9 +65,14 @@ class BookScreen extends StatelessWidget {
             }
             return false;
           },
-          child: BookCard(
-            book: book,
-            onToggle: () => onToggle(books.indexOf(book)),
+          child: GestureDetector(
+            onTap: () {
+              onBookTapped(book);
+            },
+            child: BookCard(
+              book: book,
+              onToggle: () => onToggle(books.indexOf(book)),
+            ),
           ),
         );
       },

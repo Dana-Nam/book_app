@@ -2,6 +2,7 @@ import 'package:book_app/models/book.dart';
 import 'package:book_app/screens/book_screen.dart';
 import 'package:book_app/widgets/new_book.dart';
 import 'package:flutter/material.dart';
+import 'package:book_app/screens/book_details.dart';
 
 class BookApp extends StatefulWidget {
   const BookApp({super.key});
@@ -90,6 +91,15 @@ class _BookAppState extends State<BookApp> {
     );
   }
 
+  void openBookDetails(Book book) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => BookDetails(book: book),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,6 +117,7 @@ class _BookAppState extends State<BookApp> {
         onToggle: toggleBookCompletion,
         onDelete: deleteBook,
         onBookEdited: openEditBookSheet,
+        onBookTapped: openBookDetails,
       ),
     );
   }

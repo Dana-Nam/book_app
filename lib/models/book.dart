@@ -1,7 +1,7 @@
-import 'package:book_app/data/status_data.dart';
+import 'dart:convert';
 import 'package:uuid/uuid.dart';
-
 import '../data/genres_data.dart';
+import '../data/status_data.dart';
 
 const uuid = Uuid();
 
@@ -40,5 +40,44 @@ class Book {
 
   get status {
     return statuses.firstWhere((status) => status.id == statusId);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'author': author,
+      'pages': pages,
+      'isCompleted': isCompleted,
+      'completeDate': completeDate?.toIso8601String(),
+      'genreId': genreId,
+      'statusId': statusId,
+      'rating': rating,
+    };
+  }
+
+  factory Book.fromJson(Map<String, dynamic> json) {
+    return Book(
+      id: json['id'],
+      title: json['title'],
+      author: json['author'],
+      pages: json['pages'],
+      isCompleted: json['isCompleted'],
+      completeDate: json['completeDate'] != null
+          ? DateTime.parse(json['completeDate'])
+          : null,
+      genreId: json['genreId'],
+      statusId: json['statusId'],
+      rating: json['rating'],
+    );
+  }
+
+  static String listToJson(List<Book> books) {
+    return json.encode(books.map((book) => book.toJson()).toList());
+  }
+
+  static List<Book> listFromJson(String jsonStr) {
+    final List<dynamic> jsonData = json.decode(jsonStr);
+    return jsonData.map((data) => Book.fromJson(data)).toList();
   }
 }

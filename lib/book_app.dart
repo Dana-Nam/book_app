@@ -1,9 +1,14 @@
-import 'package:book_app/models/book.dart';
+// main.dart
+import 'package:book_app/data/book_data.dart';
+import 'package:book_app/helpers/get_data_file_path.dart';
 import 'package:book_app/screens/book_screen.dart';
-import 'package:book_app/widgets/book_counter.dart';
-import 'package:book_app/widgets/new_book.dart';
 import 'package:flutter/material.dart';
+import 'package:book_app/models/book.dart';
+import 'package:book_app/widgets/book_counter.dart';
+import 'package:book_app/screens/book_screen.dart';
+import 'package:book_app/widgets/new_book.dart';
 import 'package:book_app/screens/book_details.dart';
+import 'package:book_app/data/book_data.dart';
 
 class BookApp extends StatefulWidget {
   const BookApp({super.key});
@@ -13,56 +18,46 @@ class BookApp extends StatefulWidget {
 }
 
 class _BookAppState extends State<BookApp> {
-  List<Book> books = [
-    Book(
-      title: "Book 1",
-      author: "author",
-      pages: 100,
-      genreId: "horror",
-      statusId: "in_process",
-    ),
-    Book(
-      title: "Book 2",
-      author: "author",
-      pages: 100,
-      genreId: "horror",
-      statusId: "completed",
-      rating: 3,
-      isCompleted: true,
-      completeDate: DateTime.now(),
-    ),
-    Book(
-      title: "Book 3",
-      author: "author",
-      pages: 100,
-      genreId: "horror",
-      statusId: "await",
-    ),
-  ];
+  List<Book> books = [];
 
-  void toggleBookCompletion(int index, {int? newRating}) {
+  @override
+  void initState() {
+    super.initState();
+    getDataFilePath();
+    loadBooks();
+  }
+
+  Future<void> loadBooks() async {
+    final booksJson = await loadBooksFromFile();
     setState(() {
-      books[index].completeBook(newRating);
+      books = Book.listFromJson(booksJson);
     });
   }
 
-  void deleteBook(int index) {
-    setState(() {
-      books.removeAt(index);
-    });
+  Future<void> saveBooks() async {
+    await saveBooksToFile(books);
   }
 
   void addBook(Book newBook) {
     setState(() {
       books.add(newBook);
     });
+    saveBooks();
   }
 
-  void editTask(Book editedBook) {
+  void editBook(Book editedBook) {
     setState(() {
-      final index = books.indexWhere((task) => task.id == editedBook.id);
+      final index = books.indexWhere((book) => book.id == editedBook.id);
       books[index] = editedBook;
     });
+    saveBooks();
+  }
+
+  void deleteBook(int index) {
+    setState(() {
+      books.removeAt(index);
+    });
+    saveBooks();
   }
 
   void openAddBookSheet() {
@@ -79,7 +74,7 @@ class _BookAppState extends State<BookApp> {
   }
 
   void openEditBookSheet(String id) {
-    final existingTask = books.firstWhere((task) => task.id == id);
+    final existingBook = books.firstWhere((book) => book.id == id);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -88,8 +83,8 @@ class _BookAppState extends State<BookApp> {
           bottom: MediaQuery.of(ctx).viewInsets.bottom,
         ),
         child: NewBook(
-          onBookCreated: editTask,
-          existingBook: existingTask,
+          onBookCreated: editBook,
+          existingBook: existingBook,
         ),
       ),
     );
@@ -145,7 +140,10 @@ class _BookAppState extends State<BookApp> {
           Expanded(
             child: BookScreen(
               books: filteredBooks,
-              onToggle: toggleBookCompletion,
+              onToggle: (index) => setState(() {
+                books[index].completeBook(null);
+                saveBooks();
+              }),
               onDelete: deleteBook,
               onBookEdited: openEditBookSheet,
               onBookTapped: openBookDetails,

@@ -104,12 +104,35 @@ class _BookAppState extends State<BookApp> {
     );
   }
 
+  String? selectedStatus;
+
   @override
   Widget build(BuildContext context) {
+    List<Book> filteredBooks = books
+        .where(
+            (book) => selectedStatus == null || book.statusId == selectedStatus)
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Book App'),
         actions: [
+          DropdownButton<String>(
+            value: selectedStatus,
+            hint: Text("Filter by Status"),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedStatus = newValue;
+              });
+            },
+            items: [
+              DropdownMenuItem(value: null, child: Text("All")),
+              DropdownMenuItem(value: 'on_shelf', child: Text("On shelf")),
+              DropdownMenuItem(value: 'in_process', child: Text("Reading")),
+              DropdownMenuItem(value: 'await', child: Text("Await")),
+              DropdownMenuItem(value: 'completed', child: Text("Completed")),
+            ],
+          ),
           IconButton(
             onPressed: openAddBookSheet,
             icon: Icon(Icons.add),
@@ -121,7 +144,7 @@ class _BookAppState extends State<BookApp> {
           BookCounter(books: books),
           Expanded(
             child: BookScreen(
-              books: books,
+              books: filteredBooks,
               onToggle: toggleBookCompletion,
               onDelete: deleteBook,
               onBookEdited: openEditBookSheet,

@@ -22,39 +22,55 @@ class BookCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              offset: Offset(0, 4),
+              blurRadius: 6,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(book.title, style: titleSmallStyle),
-              Text(book.author, style: titleSmallStyle),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    status.icon,
-                    size: 16,
-                    color: theme.colorScheme.tertiary,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    status.title,
-                    style: titleSmallStyle,
-                  ),
-                  if (book.isCompleted) Text(' ${(book.rating!)}/5'),
+                  Text(book.title, style: bodyLargeStyle),
+                  Text(book.author, style: titleSmallStyle),
                 ],
               ),
-              if (book.completeDate != null)
-                Text('Completed ${formatDate(book.completeDate!)}'),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        status.icon,
+                        size: 16,
+                        color: theme.colorScheme.tertiary,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        status.title,
+                        style: titleSmallStyle,
+                      ),
+                      if (book.isCompleted) Text(' ${(book.rating!)}/5'),
+                    ],
+                  ),
+                  if (book.completeDate != null)
+                    Text('Completed ${formatDate(book.completeDate!)}'),
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:book_app/models/book.dart';
 import 'package:book_app/screens/book_screen.dart';
+import 'package:book_app/widgets/book_counter.dart';
 import 'package:book_app/widgets/new_book.dart';
 import 'package:flutter/material.dart';
 import 'package:book_app/screens/book_details.dart';
@@ -26,6 +27,9 @@ class _BookAppState extends State<BookApp> {
       pages: 100,
       genreId: "horror",
       statusId: "completed",
+      rating: 3,
+      isCompleted: true,
+      completeDate: DateTime.now(),
     ),
     Book(
       title: "Book 3",
@@ -112,12 +116,19 @@ class _BookAppState extends State<BookApp> {
           ),
         ],
       ),
-      body: BookScreen(
-        books: books,
-        onToggle: toggleBookCompletion,
-        onDelete: deleteBook,
-        onBookEdited: openEditBookSheet,
-        onBookTapped: openBookDetails,
+      body: Column(
+        children: [
+          BookCounter(books: books),
+          Expanded(
+            child: BookScreen(
+              books: books,
+              onToggle: toggleBookCompletion,
+              onDelete: deleteBook,
+              onBookEdited: openEditBookSheet,
+              onBookTapped: openBookDetails,
+            ),
+          ),
+        ],
       ),
     );
   }
